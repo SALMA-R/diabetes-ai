@@ -4,3 +4,5 @@ node_modules/
 .env
 __pycache__/
 data/raw/
+data/processed/*.npy
+.claude/
