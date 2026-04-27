@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PatientData(BaseModel):
@@ -26,17 +26,16 @@ class PatientData(BaseModel):
     Education           : float = Field(default=5, ge=1, le=6, description="Niveau education (1-6)")
     Income              : float = Field(default=5, ge=1, le=8, description="Revenu annuel (1=<10k ... 8=>75k)")
 
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "HighBP": 1, "HighChol": 1, "CholCheck": 1, "BMI": 32.0,
-                "Smoker": 0, "Stroke": 0, "HeartDiseaseorAttack": 0,
-                "PhysActivity": 0, "Fruits": 1, "Veggies": 1,
-                "HvyAlcoholConsump": 0, "AnyHealthcare": 1, "NoDocbcCost": 0,
-                "GenHlth": 4, "MentHlth": 5, "PhysHlth": 10,
-                "DiffWalk": 1, "Sex": 0, "Age": 9, "Education": 4, "Income": 3
-            }
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "HighBP": 1, "HighChol": 1, "CholCheck": 1, "BMI": 32.0,
+            "Smoker": 0, "Stroke": 0, "HeartDiseaseorAttack": 0,
+            "PhysActivity": 0, "Fruits": 1, "Veggies": 1,
+            "HvyAlcoholConsump": 0, "AnyHealthcare": 1, "NoDocbcCost": 0,
+            "GenHlth": 4, "MentHlth": 5, "PhysHlth": 10,
+            "DiffWalk": 1, "Sex": 0, "Age": 9, "Education": 4, "Income": 3,
         }
+    })
 
 
 class SHAPFactor(BaseModel):
