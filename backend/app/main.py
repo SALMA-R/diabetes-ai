@@ -3,13 +3,18 @@
 Diabetes AI API - FastAPI main entrypoint
 """
 
+import os
 from contextlib import asynccontextmanager
+from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).parent.parent / ".env")
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.services.ml_service import ml_service
 from app.routes.predict import router as predict_router
 from app.routes.recommend import router as recommend_router
+from app.routes.chat import router as chat_router
 
 
 @asynccontextmanager
@@ -37,6 +42,7 @@ app.add_middleware(
 
 app.include_router(predict_router,   tags=["Prediction"])
 app.include_router(recommend_router, tags=["Recommandations"])
+app.include_router(chat_router,      tags=["Chat"])
 
 
 @app.get("/", tags=["Health"])

@@ -20,6 +20,7 @@ pytest-cov
 mlflow
 joblib
 python-dotenv
+anthropic
 openai
 langchain
 langchain-openai

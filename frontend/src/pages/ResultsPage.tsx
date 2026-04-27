@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {
   AlertTriangle, CheckCircle, XCircle,
   TrendingUp, TrendingDown, RefreshCw,
-  FileDown, ArrowLeft, Shield,
+  FileDown, ArrowLeft, Shield, MessageCircle, LayoutDashboard,
 } from 'lucide-react'
 import type { PatientData, PredictionResult } from '../services/api'
 
@@ -54,21 +54,44 @@ const BADGE_CONFIG = {
 }
 
 // ─── main component ───────────────────────────────────────────────────────────
+function loadSavedResult(): PredictionResult | null {
+  try {
+    const raw = localStorage.getItem('lastPrediction')
+    return raw ? (JSON.parse(raw) as PredictionResult) : null
+  } catch { return null }
+}
+
 export default function ResultsPage() {
   const { state } = useLocation()
   const navigate  = useNavigate()
   const printRef  = useRef<HTMLDivElement>(null)
 
-  const result: PredictionResult | undefined = state?.result
-  const patientData: PatientData | undefined  = state?.patientData
+  // Use navigation state first; fall back to localStorage so back-navigation works
+  const result: PredictionResult | null =
+    (state?.result as PredictionResult | undefined) ?? loadSavedResult()
+  const patientData: PatientData | undefined = state?.patientData
 
-  // Persist for WhatIfPage
+  // Persist everything for WhatIfPage, Dashboard and back-navigation
   useEffect(() => {
-    if (result && patientData) {
-      localStorage.setItem('lastPatientData', JSON.stringify(patientData))
+    if (result) {
+      localStorage.setItem('lastPrediction', JSON.stringify(result))
       localStorage.setItem('lastRiskScore', String(result.risk_score))
     }
-  }, [result, patientData])
+    if (patientData) {
+      localStorage.setItem('lastPatientData', JSON.stringify(patientData))
+    }
+    if (result) {
+      try {
+        const raw     = localStorage.getItem('riskHistory')
+        const history = raw ? JSON.parse(raw) as { date: string; score: number; classification: string }[] : []
+        // Only push if this is a fresh navigation (not restored from localStorage)
+        if (state?.result) {
+          history.push({ date: new Date().toISOString(), score: result.risk_score, classification: result.classification })
+          localStorage.setItem('riskHistory', JSON.stringify(history.slice(-20)))
+        }
+      } catch { /* ignore */ }
+    }
+  }, [result, patientData, state?.result])
 
   if (!result) {
     return (
@@ -185,6 +208,20 @@ export default function ResultsPage() {
           >
             <RefreshCw className="w-4 h-4" />
             Simuler une amélioration
+          </button>
+          <button
+            onClick={() => navigate('/chat')}
+            className="flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-purple-200 text-purple-600 font-medium hover:bg-purple-50 transition-all"
+          >
+            <MessageCircle className="w-4 h-4" />
+            Parler à l'assistant
+          </button>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-green-200 text-green-600 font-medium hover:bg-green-50 transition-all"
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            Mon tableau de bord
           </button>
           <button
             onClick={handlePrint}
