@@ -5,7 +5,7 @@ import {
   TrendingUp, TrendingDown, RefreshCw,
   FileDown, ArrowLeft, Shield,
 } from 'lucide-react'
-import type { PredictionResult } from '../services/api'
+import type { PatientData, PredictionResult } from '../services/api'
 
 // ─── circular gauge ───────────────────────────────────────────────────────────
 function RiskGauge({ score }: { score: number }) {
@@ -60,6 +60,15 @@ export default function ResultsPage() {
   const printRef  = useRef<HTMLDivElement>(null)
 
   const result: PredictionResult | undefined = state?.result
+  const patientData: PatientData | undefined  = state?.patientData
+
+  // Persist for WhatIfPage
+  useEffect(() => {
+    if (result && patientData) {
+      localStorage.setItem('lastPatientData', JSON.stringify(patientData))
+      localStorage.setItem('lastRiskScore', String(result.risk_score))
+    }
+  }, [result, patientData])
 
   if (!result) {
     return (
@@ -171,7 +180,7 @@ export default function ResultsPage() {
         {/* ── Action buttons ── */}
         <div className="flex gap-3 flex-wrap">
           <button
-            onClick={() => navigate('/assessment')}
+            onClick={() => navigate('/whatif')}
             className="flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-blue-200 text-blue-600 font-medium hover:bg-blue-50 transition-all"
           >
             <RefreshCw className="w-4 h-4" />
