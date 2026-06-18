@@ -445,7 +445,7 @@ export default function AssessmentPage() {
                   {/* Sommeil */}
                   <div className="rounded-xl border border-[#00A86B]/20 bg-[#F0FFF8]/50 p-5 space-y-5">
                     <p className="text-xs font-bold text-[#007A4D] uppercase tracking-wider">🌙 Sommeil</p>
-                    <SliderField emoji="🌙" label="Heures de sommeil par nuit"
+                    <SliderField label="Heures de sommeil par nuit"
                       value={form.sleepHours} min={4} max={12} onChange={v => set('sleepHours', v)} unit=" h" />
                     <YesNo label="Avez-vous des troubles du sommeil ou de l'insomnie ?"
                       value={form.sleepDisorders} onChange={v => set('sleepDisorders', v)} />

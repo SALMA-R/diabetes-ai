@@ -202,7 +202,7 @@ export default function DashboardPage() {
                 <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#94A3B8' }} />
                 <YAxis domain={[0, 100]} unit="%" tick={{ fontSize: 11, fill: '#94A3B8' }} />
                 <Tooltip
-                  formatter={(v: number) => [`${v}%`, 'Risque']}
+                  formatter={(v) => [`${v}%`, 'Risque']}
                   contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                 />
                 <ReferenceLine y={30} stroke="#00A86B" strokeDasharray="4 4"
