@@ -20,6 +20,8 @@ pytest-cov
 mlflow
 joblib
 python-dotenv
+authlib
+itsdangerous
 anthropic
 openai
 langchain

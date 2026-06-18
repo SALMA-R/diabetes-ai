@@ -1,29 +1,51 @@
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { getToken } from './auth'
 
 const api = axios.create({ baseURL: 'http://localhost:8000' })
 
+// Attach Bearer token to every request when the user is logged in
+api.interceptors.request.use(config => {
+  const token = getToken()
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
+
 // Education and Income are fixed at 5 (median) — not collected from the user
 export interface PatientData {
-  HighBP: number
-  HighChol: number
-  CholCheck: number
-  BMI: number
-  Smoker: number
-  Stroke: number
+  // ── CDC 21 features ───────────────────────────────────────────────────────
+  HighBP              : number
+  HighChol            : number
+  CholCheck           : number
+  BMI                 : number
+  Smoker              : number
+  Stroke              : number
   HeartDiseaseorAttack: number
-  PhysActivity: number
-  Fruits: number
-  Veggies: number
-  HvyAlcoholConsump: number
-  AnyHealthcare: number
-  NoDocbcCost: number
-  GenHlth: number
-  MentHlth: number
-  PhysHlth: number
-  DiffWalk: number
-  Sex: number
-  Age: number
+  PhysActivity        : number
+  Fruits              : number
+  Veggies             : number
+  HvyAlcoholConsump   : number
+  AnyHealthcare       : number
+  NoDocbcCost         : number
+  GenHlth             : number
+  MentHlth            : number
+  PhysHlth            : number
+  DiffWalk            : number
+  Sex                 : number
+  Age                 : number
+
+  // ── Extended lifestyle features (optional — sent in step 5) ───────────────
+  sleep_hours?        : number
+  sleep_disorders?    : number
+  homemade_meals_week?: number
+  sugary_drinks?      : number
+  stress_level?       : number
+  relaxation_practice?: number
+  family_diabetes?    : number
+  family_heart?       : number
+  water_glasses?      : number
+  sedentary_hours?    : number
+  ultra_processed?    : number
 }
 
 export interface SHAPFactor {
@@ -34,14 +56,14 @@ export interface SHAPFactor {
 }
 
 export interface PredictionResult {
-  risk_score: number
-  classification: string
-  top_3_factors: SHAPFactor[]
-  message: string
-  recommendations: string[]
+  risk_score      : number
+  classification  : string
+  top_3_factors   : SHAPFactor[]
+  message         : string
+  recommendations : string[]
 }
 
-// module-level guard — also reset on HMR via the ref in the component
+// Module-level guard — prevents duplicate submissions
 let _requesting = false
 
 export function resetRequestingGuard() { _requesting = false }
@@ -60,7 +82,7 @@ export async function predictDiabetes(patientData: PatientData): Promise<Predict
         err.message === 'Network Error' ||
         err.response === undefined
       if (isOffline) {
-        toast.error('Le serveur est hors ligne. Lancez : cd backend && python run.py', {
+        toast.error('Le serveur est hors ligne. Lancez : python backend/run.py', {
           duration: 6000,
           id: 'server-offline',
         })

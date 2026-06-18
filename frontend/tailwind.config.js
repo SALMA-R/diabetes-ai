@@ -7,8 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        'medical-blue': '#1A5276',
-        'health-green': '#1E8449',
+        'medical-green': {
+          50:  '#F0FFF8',
+          100: '#D1FAE5',
+          500: '#00A86B',
+          600: '#009960',
+          700: '#007A4D',
+          DEFAULT: '#00A86B',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
     },
   },

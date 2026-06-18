@@ -7,6 +7,31 @@ import {
 } from 'lucide-react'
 import type { PatientData, PredictionResult } from '../services/api'
 
+// ─── feature name translations ────────────────────────────────────────────────
+const FEATURE_NAMES: Record<string, string> = {
+  Age                 : 'Âge',
+  BMI                 : 'Indice de masse corporelle (IMC)',
+  HighBP              : 'Tension artérielle élevée',
+  HighChol            : 'Cholestérol élevé',
+  CholCheck           : 'Contrôle du cholestérol',
+  Smoker              : 'Tabagisme',
+  Stroke              : "Antécédent d'AVC",
+  HeartDiseaseorAttack: 'Maladie cardiaque',
+  PhysActivity        : 'Activité physique',
+  Fruits              : 'Consommation de fruits',
+  Veggies             : 'Consommation de légumes',
+  HvyAlcoholConsump   : 'Alcool excessif',
+  AnyHealthcare       : 'Couverture santé',
+  NoDocbcCost         : 'Renoncement aux soins',
+  GenHlth             : 'Santé générale',
+  MentHlth            : 'Santé mentale',
+  PhysHlth            : 'Santé physique',
+  DiffWalk            : 'Difficulté à marcher',
+  Sex                 : 'Sexe',
+  Education           : 'Éducation',
+  Income              : 'Revenu',
+}
+
 // ─── circular gauge ───────────────────────────────────────────────────────────
 function RiskGauge({ score }: { score: number }) {
   const [animated, setAnimated] = useState(0)
@@ -16,32 +41,33 @@ function RiskGauge({ score }: { score: number }) {
     return () => clearTimeout(t)
   }, [score])
 
-  const riskScore    = animated * 100
-  const radius       = 54
-  const circumference = 2 * Math.PI * radius
-  const progress     = (riskScore / 100) * circumference
-  const offset       = circumference - progress
-  const gaugeColor   = riskScore < 30 ? '#16a34a' : riskScore < 60 ? '#ea580c' : '#dc2626'
+  const RADIUS       = 54
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS
+  const riskPercent  = Math.round(animated * 100)
+  const offset       = CIRCUMFERENCE - (riskPercent / 100) * CIRCUMFERENCE
+  const gaugeColor   = riskPercent < 30 ? '#16a34a' : riskPercent < 60 ? '#ea580c' : '#dc2626'
 
   return (
-    <div className="relative flex items-center justify-center">
-      <svg width="140" height="140" viewBox="0 0 140 140">
-        <circle cx="70" cy="70" r={radius}
+    <div className="flex flex-col items-center">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r={RADIUS}
           fill="none" stroke="#e5e7eb" strokeWidth="12" />
-        <circle cx="70" cy="70" r={radius}
+        <circle cx="80" cy="80" r={RADIUS}
           fill="none" stroke={gaugeColor} strokeWidth="12"
           strokeLinecap="round"
-          strokeDasharray={circumference}
+          strokeDasharray={CIRCUMFERENCE}
           strokeDashoffset={offset}
-          transform="rotate(-90 70 70)"
-          style={{ transition: 'stroke-dashoffset 1.5s ease' }} />
+          transform="rotate(-90 80 80)"
+          style={{ transition: 'stroke-dashoffset 1.5s ease-in-out' }} />
+        <text x="80" y="72" textAnchor="middle"
+          fontSize="28" fontWeight="bold" fill={gaugeColor}>
+          {riskPercent}%
+        </text>
+        <text x="80" y="92" textAnchor="middle"
+          fontSize="13" fill="#6b7280">
+          de risque
+        </text>
       </svg>
-      <div className="absolute flex flex-col items-center leading-tight">
-        <span className="text-2xl font-extrabold" style={{ color: gaugeColor }}>
-          {Math.round(riskScore)}%
-        </span>
-        <span className="text-xs text-gray-400">de risque</span>
-      </div>
     </div>
   )
 }
@@ -158,7 +184,7 @@ export default function ResultsPage() {
                       <span className="w-6 h-6 rounded-full bg-gray-100 text-gray-600 text-xs font-bold flex items-center justify-center">
                         {i + 1}
                       </span>
-                      <span className="font-medium text-gray-700">{f.feature}</span>
+                      <span className="font-medium text-gray-700">{FEATURE_NAMES[f.feature] ?? f.feature}</span>
                     </div>
                     <div className={`flex items-center gap-1 text-sm font-semibold
                       ${isRisk ? 'text-red-500' : 'text-green-600'}`}>
