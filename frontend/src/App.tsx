@@ -15,7 +15,7 @@ import './index.css'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Toaster position="top-right" toastOptions={{
         style: { fontFamily: 'Inter, sans-serif', borderRadius: '12px', fontSize: '14px' },
         success: { style: { border: '1px solid #00A86B', color: '#007A4D' } },
