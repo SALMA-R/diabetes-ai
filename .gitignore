@@ -1,0 +1,13 @@
+venv/
+.venv/
+node_modules/
+*.pkl
+*.pyc
+.env
+__pycache__/
+*.db
+data/raw/
+data/processed/*.npy
+.claude/
+dist/
+/package-lock.json
